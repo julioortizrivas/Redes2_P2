@@ -46,12 +46,13 @@ public class ClienteGUI extends JFrame implements ActionListener {
 		
 		sCl = new ClienteO(1234,"127.0.0.1");
 		carrito = sCl.validarUser(user);
+		artisCarrito = sCl.getObjCarrito();
 		sCl.CerrarConexion();
 		
 		sCl = new ClienteO(1234,"127.0.0.1");
 		sCl.RecibeCatalogo();
 		sCl.CerrarConexion();
-		carritoS = new String[sCl.totalProductos][4];
+		carritoS = new String[sCl.getTotalProductos()][4];
 		
 		generarVentana();
 	}
@@ -70,11 +71,11 @@ public class ClienteGUI extends JFrame implements ActionListener {
 		selecMostrar = lista.getSelectedIndex();
 				asignarImagen(selecMostrar);
 				lblimagen.setIcon(imagenprod);
-				lblnombre.setText("Nombre: " + sCl.catalogo[selecMostrar].getnombre());
-				lbldesc.setText("Descripci\u00F3n: " + sCl.catalogo[selecMostrar].getdesc());
-				lblclasif.setText("Clasificaci\u00F3n: " + sCl.catalogo[selecMostrar].getclasif());
-				lblprecio.setText("Precio: $" + f.format(sCl.catalogo[selecMostrar].getprecio()));
-				lblexist.setText("Existencia: " + sCl.catalogo[selecMostrar].getexist());
+				lblnombre.setText("Nombre: " + sCl.getCatalogo()[selecMostrar].getnombre());
+				lbldesc.setText("Descripci\u00F3n: " + sCl.getCatalogo()[selecMostrar].getdesc());
+				lblclasif.setText("Clasificaci\u00F3n: " + sCl.getCatalogo()[selecMostrar].getclasif());
+				lblprecio.setText("Precio: $" + f.format(sCl.getCatalogo()[selecMostrar].getprecio()));
+				lblexist.setText("Existencia: " + sCl.getCatalogo()[selecMostrar].getexist());
 				
 				for(int i = 0; i < artisCarrito; i++){
 					if(selecMostrar == carrito[i][0]){
@@ -90,9 +91,11 @@ public class ClienteGUI extends JFrame implements ActionListener {
 		ventanaInicial();
 		inicializar();
 		if(carrito == null){
-			carrito = new int[sCl.totalProductos][2];
+			carrito = new int[sCl.getTotalProductos()][2];
+			artisCarrito = 0;
 		} else {
-			 System.out.println(""+carrito[0][0]);
+			System.out.println(""+carrito[0][0]);
+			System.out.println(""+artisCarrito);
 			actualizarCarro();
 			pantallaInicial();		
 		}
@@ -196,7 +199,7 @@ public class ClienteGUI extends JFrame implements ActionListener {
 	
 	public void asignarImagen(int id){
 		try{
-			ByteArrayInputStream bis = new ByteArrayInputStream(sCl.catalogo[id].getimagen());
+			ByteArrayInputStream bis = new ByteArrayInputStream(sCl.getCatalogo()[id].getimagen());
 			BufferedImage bImage2 = ImageIO.read(bis);
 			image = bImage2;
 			imagenprod = new ImageIcon(image);
@@ -221,9 +224,9 @@ public class ClienteGUI extends JFrame implements ActionListener {
 	}
 	
 	public void agregarAlCarro(){
-		int cantidad = sCl.catalogo[selecMostrar].getexist()+1;
+		int cantidad = sCl.getCatalogo()[selecMostrar].getexist()+1;
 		
-		while(cantidad > sCl.catalogo[selecMostrar].getexist()){
+		while(cantidad > sCl.getCatalogo()[selecMostrar].getexist()){
 			cantidad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad: "));
 		}
 		carrito[artisCarrito][0] = selecMostrar;
@@ -233,19 +236,19 @@ public class ClienteGUI extends JFrame implements ActionListener {
 		
 		System.out.println("Se agreg\u00F3: "+cantidad+ " producto(s) con el c\u00F3digo "+selecMostrar+ " al carrito.");
 		JOptionPane.showMessageDialog(null,"Has agregado " + cantidad + " "+comilla 
-											+ sCl.catalogo[selecMostrar].getnombre()+ comilla + " a tu carrito exitosamente.");
+											+ sCl.getCatalogo()[selecMostrar].getnombre()+ comilla + " a tu carrito exitosamente.");
 		
 		botonesAgregar(cantidad);
 	}
 	
 	public void actualizarCarro(){
 		for(int i = 0; i < artisCarrito; i++){
-			totalAPagar += Double.valueOf(carrito[i][1]) * sCl.catalogo[carrito[i][0]].getprecio();
+			totalAPagar += Double.valueOf(carrito[i][1]) * sCl.getCatalogo()[carrito[i][0]].getprecio();
 		
-			carritoS[i][0] = sCl.catalogo[carrito[i][0]].getnombre();
+			carritoS[i][0] = sCl.getCatalogo()[carrito[i][0]].getnombre();
 			carritoS[i][1] = "" + carrito[i][1];
-			carritoS[i][2] = "$ " + f.format(sCl.catalogo[carrito[i][0]].getprecio());
-			carritoS[i][3] = "$ " + f.format(Double.valueOf(carrito[i][1]) * sCl.catalogo[carrito[i][0]].getprecio());
+			carritoS[i][2] = "$ " + f.format(sCl.getCatalogo()[carrito[i][0]].getprecio());
+			carritoS[i][3] = "$ " + f.format(Double.valueOf(carrito[i][1]) * sCl.getCatalogo()[carrito[i][0]].getprecio());
 		}
 		
 	}
@@ -340,7 +343,7 @@ public class ClienteGUI extends JFrame implements ActionListener {
 			botonesQuitar();
 			
 			JOptionPane.showMessageDialog(null,"Se ha(n) removido " + carritoAux[codigo][1] + " "+comilla 
-											+ sCl.catalogo[codigo].getnombre()+ comilla + " de tu carrito.");
+											+ sCl.getCatalogo()[codigo].getnombre()+ comilla + " de tu carrito.");
 		}
 		else{
 			System.out.println("No quitar.");
@@ -351,11 +354,11 @@ public class ClienteGUI extends JFrame implements ActionListener {
 		selecMostrar = 0;
 		asignarImagen(0);
 		lblimagen.setIcon(imagenprod);
-		lblnombre.setText("Nombre: " + sCl.catalogo[0].getnombre());
-		lbldesc.setText("Descripci\u00F3n: " + sCl.catalogo[0].getdesc());
-		lblclasif.setText("Clasificaci\u00F3n: " + sCl.catalogo[0].getclasif());
-		lblprecio.setText("Precio: $" + f.format(sCl.catalogo[0].getprecio()));
-		lblexist.setText("Existencia: " + sCl.catalogo[0].getexist());
+		lblnombre.setText("Nombre: " + sCl.getCatalogo()[0].getnombre());
+		lbldesc.setText("Descripci\u00F3n: " + sCl.getCatalogo()[0].getdesc());
+		lblclasif.setText("Clasificaci\u00F3n: " + sCl.getCatalogo()[0].getclasif());
+		lblprecio.setText("Precio: $" + f.format(sCl.getCatalogo()[0].getprecio()));
+		lblexist.setText("Existencia: " + sCl.getCatalogo()[0].getexist());
 		botonesQuitar();
 	}
 	

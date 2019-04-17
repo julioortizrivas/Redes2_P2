@@ -220,7 +220,8 @@ public class ServidorO{
 			System.out.println("Productos cargados: "+cuenta);
 			csvReader1.close();
 			
-			//ENVIAR 'cuenta'
+			oos.writeObject(cuenta);
+			oos.flush();
 			
 			carrito = new int[nf][2];
 			
@@ -238,7 +239,7 @@ public class ServidorO{
 			System.out.println("Carrito cargado.");
 		}catch(Exception e){
 		}
-		//carritoF.delete();
+		carritoF.delete();
 	}
 	
 	public byte[] ConvertirImagen(String imag){

@@ -10,8 +10,8 @@ public class ClienteO{
 	private Pedido p1;
 	private String[] listaPro;
 	
-	public Articulo[] catalogo;
-	public int totalProductos = 0;
+	private Articulo[] catalogo;
+	private int totalProductos = 0, objCarrito = 0;
 	private int[][] carrito = null;
 	
 	
@@ -96,8 +96,11 @@ public class ClienteO{
 			//FALTA RECIBIR EL NUMERO DE PRODUCTOS QUE SE LEYERON DEL CARRITO.
 			
 			if(valid==true){
+				objCarrito = (int)ois.readObject();
+				System.out.println("Llegaron: "+objCarrito);
 				carrito = (int[][])ois.readObject();
 				lalala = carrito;
+				
 			} else {
 				lalala = null;
 			}
@@ -110,5 +113,17 @@ public class ClienteO{
 	
 	public String[] Catalogo(){
 		return listaPro;
+	}
+	
+	public int getTotalProductos(){
+		return totalProductos;
+	}
+	
+	public Articulo[] getCatalogo(){
+		return catalogo;
+	}
+	
+	public int getObjCarrito(){
+		return objCarrito;
 	}
 }
